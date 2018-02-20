@@ -1,0 +1,23 @@
+interface=ens192,lo
+#bind-interfaces
+domain={{ domain }}
+# DHCP range-leases
+dhcp-range=ens192,10.0.0.100,10.0.0.250,255.255.255.0,1h
+# PXE
+dhcp-boot=pxelinux.0,pxeserver,10.0.0.2
+# Gateway
+dhcp-option=3,10.0.0.1
+# DNS
+dhcp-option=6,10.0.0.1,10.10.30.5
+server=10.10.30.6
+# Broadcast Address
+dhcp-option=28,10.0.0.255
+# NTP Server
+dhcp-option=42,10.0.0.1
+pxe-prompt="Press F8 for menu.", 1
+pxe-service=x86PC, "Install RHEL 7 from network server 10.0.0.2", pxelinux
+enable-tftp
+tftp-root=/var/lib/tftpboot
+dhcp-hostsdir=/etc/dnsmasq.hostsdir
+# Leases
+#dhcp-leasefile=/etc/dnsmasq.leases

@@ -1,0 +1,24 @@
+---
+
+- name: Install packages required to pxeboot
+  yum:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+    - dnsmasq
+    - vsftpd
+    - syslinux
+    - tftp-server
+
+- name: Ensure dnsmasq is configured
+  template:
+    src: dnsmasq.conf.j2
+    dest: /etc/dnsmasq.conf
+    mode: 0644
+
+- name: Copy bootloaders to /var/lib/tftpboot
+  synchronize:
+    src: /usr/share/syslinux
+    dest: /var/lib/tftpboot
+  delegate_to: "{{ inventory_hostname }}"
+
