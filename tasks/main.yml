@@ -30,3 +30,63 @@
     dest: /var/lib/tftpboot
   delegate_to: "{{ inventory_hostname }}"
 
+- name: Create default pxelinux.cfg file
+  template:
+    src: pxelinux.cfg.j2
+    dest: /var/lib/tftpboot/pxelinux.cfg/default
+    mode: 0644
+
+- name: Add RHEL 7 Boot Images to PXE Server
+  debug:
+    msg: hostvars[inventory_hostname]
+    verbosity: 4
+
+# Check to see if files already copied
+# Either get RHEL 7 from DVD or download directly
+- name: Mount DVD read-only
+  mount:
+    path: /mnt
+    src: /dev/sr0
+    fstype: iso9660
+    opts: ro
+    state: mounted
+  when: dvd_iso
+
+- name: Download Centos 7 instead of using DVD
+  get_url:
+    url: http://mirrors.xservers.ro/centos/7.4.1708/isos/x86_64/CentOS-7-x86_64-DVD-1708.iso
+    dest: /tmp/
+    mode: 0440
+  when: not dvd_iso
+
+mount -o loop /path/to/centos-dvd.iso  /mnt
+
+# mkdir /var/lib/tftpboot/centos7
+# cp /mnt/images/pxeboot/vmlinuz  /var/lib/tftpboot/centos7
+# cp /mnt/images/pxeboot/initrd.img  /var/lib/tftpboot/centos7
+
+ cp -r /mnt/*  /var/ftp/pub/
+# chmod -R 755 /var/ftp/pub
+
+- name: Unmount DVD
+  mount:
+    path: /mnt
+    state: unmounted
+  when: dvd_iso
+
+# systemctl start dnsmasq
+# systemctl status dnsmasq
+# systemctl start vsftpd
+# systemctl status vsftpd
+# systemctl enable dnsmasq
+# systemctl enable vsftpd
+
+# netstat -tulpn
+# firewall-cmd --add-service=ftp --permanent  	## Port 21
+# firewall-cmd --add-service=dns --permanent  	## Port 53
+# firewall-cmd --add-service=dhcp --permanent  	## Port 67
+# firewall-cmd --add-port=69/udp --permanent  	## Port for TFTP
+# firewall-cmd --add-port=4011/udp --permanent  ## Port for ProxyDHCP
+# firewall-cmd --reload  ## Apply rules
+
+

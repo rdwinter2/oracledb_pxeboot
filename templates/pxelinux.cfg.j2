@@ -8,4 +8,4 @@ label kickstart
 menu label ^kickstart
 menu default
 kernel rhel7/vmlinuz
-append initrd=rhel7/initrd.img repo=ftp://10.0.0.2/pub ks=ftp://10.0.0.2/pub/ks.cfg inst.kdump_addon=off devfs=nomount xdriver=vesa nomodeset
+append initrd=rhel7/initrd.img repo=ftp://{{ ftp_server }}/pub ks=ftp://{{ ftp_server }}/pub/ks.cfg inst.kdump_addon=off devfs=nomount xdriver=vesa nomodeset
