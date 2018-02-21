@@ -15,6 +15,14 @@
     src: dnsmasq.conf.j2
     dest: /etc/dnsmasq.conf
     mode: 0644
+  notify:
+    - restart dnsmasq
+
+- name: ensure dnsmasq starts on a fresh boot
+  service:
+    name: dnsmasq
+    state: started
+    enabled: yes
 
 - name: Copy bootloaders to /var/lib/tftpboot
   synchronize:
